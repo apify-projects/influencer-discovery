@@ -1,9 +1,9 @@
 import { ChatOpenAI } from '@langchain/openai';
 import { Dataset } from 'apify';
-import { State } from './state.js';
+import { State, StateAnnotation } from './state.js';
 import { SITE_NAME_FOR_LLM } from './consts.js';
 
-export const evaluateProfiles = (model: ChatOpenAI) => async (state: State) => {
+export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Promise<typeof StateAnnotation.Update> => {
     const { profilesToEvaluate, influencerDescription, scrapedProfiles } = state;
     const scrapedProfilesToEvaluate = profilesToEvaluate.map((profileUrl) => {
         // TODO: map correctly once we have typing
@@ -30,8 +30,12 @@ export const evaluateProfiles = (model: ChatOpenAI) => async (state: State) => {
     const parsedResult = JSON.parse(result.content.toString()) as {
         goodFitProfiles: string[];
     };
-    // TODO: remove profiles from evaluation
-
     // TODO: correct output format
     await Dataset.pushData(parsedResult.goodFitProfiles);
+    return {
+        profilesToEvaluate: {
+            // TODO: use correct mapping
+            remove: scrapedProfilesToEvaluate.map((profile) => profile.url),
+        },
+    };
 };
