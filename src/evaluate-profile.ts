@@ -19,8 +19,7 @@ const fitScaleMessage = Object.entries(FIT_SCALE)
 export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Promise<typeof StateAnnotation.Update> => {
     const { profilesToEvaluate, influencerDescription, scrapedProfiles } = state;
     const scrapedProfilesToEvaluate = profilesToEvaluate.map((profileUrl) => {
-        // TODO: map correctly once we have typing
-        const profile = scrapedProfiles.find((p) => p.url === profileUrl);
+        const profile = scrapedProfiles[profileUrl];
         return profile;
     })
         .filter((profile) => profile !== undefined);
@@ -52,7 +51,7 @@ export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Pro
     return {
         profilesToEvaluate: {
             // TODO: use correct mapping
-            remove: scrapedProfilesToEvaluate.map((profile) => profile.url),
+            remove: scrapedProfilesToEvaluate.map((profile) => profile[0].input),
         },
     };
 };
