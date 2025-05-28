@@ -3,13 +3,13 @@ import { client } from './orchestrator.js';
 import type { State } from './state.js';
 import type { TikTokDatasetItem } from './types.js';
 
+export const GET_TIKTOK_PROFILE_NODE_NAME = 'tiktok-profile';
 export function getTikTokProfile() {
     return async (state: State) => {
-        const nodeName = 'tiktok-profile';
-        log.info(`[${nodeName}] Running graph node.`);
+        log.info(`[${GET_TIKTOK_PROFILE_NODE_NAME}] Running graph node.`);
 
         const run = await client.actor('clockworks/tiktok-scraper').call(
-            nodeName, {
+            GET_TIKTOK_PROFILE_NODE_NAME, {
                 profiles: state.profilesToEvaluate,
                 resultsPerPage: 100,
             },
