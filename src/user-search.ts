@@ -27,7 +27,7 @@ export function performTikTokUserSearch() {
         }, {} as Record<string, TikTokDatasetItem[]>);
         return {
             scrapedProfiles,
-            profilesToEvaluate: {
+            profilesToLlm: {
                 append: Object.keys(scrapedProfiles),
             },
         };

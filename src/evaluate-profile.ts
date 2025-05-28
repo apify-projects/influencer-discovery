@@ -18,8 +18,8 @@ const fitScaleMessage = Object.entries(FIT_SCALE)
     .join(', ');
 
 export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Promise<typeof StateAnnotation.Update> => {
-    const { profilesToEvaluate, influencerDescription, scrapedProfiles } = state;
-    const scrapedProfilesToEvaluate = profilesToEvaluate.map((profileUrl) => {
+    const { influencerDescription, scrapedProfiles, profilesToLlm } = state;
+    const scrapedProfilesToEvaluate = profilesToLlm.map((profileUrl) => {
         const profile = scrapedProfiles[profileUrl];
         return profile;
     })
@@ -55,8 +55,8 @@ export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Pro
         ]);
     await Dataset.pushData(result);
     return {
-        profilesToEvaluate: {
-            remove: scrapedProfilesToEvaluate.map((profile) => profile[0].input),
+        profilesToLlm: {
+            remove: profilesToLlm,
         },
     };
 };
