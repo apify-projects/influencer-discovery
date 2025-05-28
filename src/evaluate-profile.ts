@@ -38,7 +38,7 @@ export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Pro
                             fit: z.number().describe(`How well the profile fits the influencer description.`),
                             fitDescription: z.string().describe('Why such a fit score was given.'),
                         }),
-                    ),
+                    ).length(BATCH_SIZE),
                 }))
         .batch(scrapedProfilesToEvaluateInBatches.map((scrapedProfilesToEvaluate) => [
             {
