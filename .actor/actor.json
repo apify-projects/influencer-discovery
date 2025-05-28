@@ -1,8 +1,8 @@
 {
 	"actorSpecification": 1,
 	"name": "influencer-discovery-agent",
-	"title": "Project Cheerio Crawler Typescript",
-	"description": "Crawlee and Cheerio project in typescript.",
+	"title": "Influencer Discover Agent",
+	"description": "Find the perfect influencer to boost your product on Social Medias!",
 	"version": "0.0",
 	"meta": {
 		"templateId": "ts-crawlee-cheerio"
