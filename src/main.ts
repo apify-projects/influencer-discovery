@@ -29,7 +29,10 @@ const {
     mock = false,
 } = await Actor.getInput<Input>() ?? {} as Input;
 
-const agentModel = new ChatOpenAI();
+const agentModel = new ChatOpenAI({
+    model: 'o3',
+    apiKey: 'API_KEY',
+});
 
 const chain = new StateGraph(StateAnnotation)
     .addNode('getTikTokProfile', getTikTokProfile())
