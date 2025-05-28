@@ -36,10 +36,10 @@ export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Pro
             {
                 role: 'user',
                 content: `Profile Information: ${scrapedProfilesToEvaluate.map((profile) => formatProfileInfoForLLM(profile)).join('\n\n')}`
-                + `Influencer Description: "${influencerDescription}"`,
+                    + `Influencer Description: "${influencerDescription}"`,
             },
         ]);
-    await Dataset.pushData(result);
+    await Dataset.pushData(result.evaluatedProfiles);
     return {
         profilesToLlm: {
             remove: profilesToLlm,
