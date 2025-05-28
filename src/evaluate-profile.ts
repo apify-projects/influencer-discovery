@@ -25,14 +25,18 @@ export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Pro
     })
         .filter((profile) => profile !== undefined);
     const result = await model
-        .withStructuredOutput(z.array(
-            z.object({
-                // TODO: specify under what key/where it is provided
-                profile: z.string().describe('The profile handle, as provided in the input'),
-                fit: z.number().describe(`How well the profile fits the influencer description: ${fitScaleMessage}.`),
-                fitDescription: z.string().describe('Why such a fit score was given.'),
-            }),
-        ))
+        .withStructuredOutput(
+            z.object(
+                {
+                    evaluatedProfiles: z.array(
+                        z.object({
+                            // TODO: specify under what key/where it is provided
+                            profile: z.string().describe('The profile handle, as provided in the input'),
+                            fit: z.number().describe(`How well the profile fits the influencer description: ${fitScaleMessage}.`),
+                            fitDescription: z.string().describe('Why such a fit score was given.'),
+                        }),
+                    ),
+                }))
         .invoke([
             {
                 role: 'system',
