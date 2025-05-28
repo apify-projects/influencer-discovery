@@ -36,3 +36,16 @@ export type TikTokDatasetItem = {
     commentCount: number,
     input: string,
 }
+
+export type StructuredProfileInformation = {
+  originalUserInput: string,
+  authorInformation: TikTokDatasetItem['authorMeta'],
+  videosInformation: {
+    title: string
+    diggCount: number,
+    shareCount: number,
+    playCount: number,
+    collectCount: number,
+    commentCount: number,
+  }[],
+}

@@ -51,7 +51,7 @@ export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Pro
     return {
         profilesToEvaluate: {
             // TODO: use correct mapping
-            remove: scrapedProfilesToEvaluate.map((profile) => profile[0].input),
+            remove: scrapedProfilesToEvaluate.map((profile) => profile.originalUserInput),
         },
     };
 };

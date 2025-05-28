@@ -1,5 +1,5 @@
 import { Annotation } from '@langchain/langgraph';
-import type { TikTokDatasetItem } from './types.js';
+import type { StructuredProfileInformation } from './types.js';
 
 export const StateAnnotation = Annotation.Root({
     profilesToEvaluate: Annotation<string[], {
@@ -19,7 +19,7 @@ export const StateAnnotation = Annotation.Root({
         default: () => [],
     }),
     // TODO: use typing
-    scrapedProfiles: Annotation<Record<string, TikTokDatasetItem[]>>(),
+    scrapedProfiles: Annotation<Record<string, StructuredProfileInformation>>(),
     influencerDescription: Annotation<string>(),
 });
 export type State = typeof StateAnnotation.State;
