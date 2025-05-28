@@ -8,18 +8,26 @@ export function performTikTokUserSearch() {
     return async (state: State): Promise<typeof StateAnnotation.Update> => {
         log.info(`[${TIKTOK_USER_SEARCH_NODE_NAME}] Running graph node.`);
 
-        const run = await client.actor('clockworks/tiktok-scraper').call(
-            TIKTOK_USER_SEARCH_NODE_NAME,
-            {
-                searchQueries: state.searchTermsToScrape,
-                resultsPerPage: 5,
-                maxProfilesPerQuery: 50,
-                searchSection: '/user',
-            },
-        );
+        let run;
+        if (state.mock) {
+            run = await client.run('Fb9I5uJ0Kwd5nwN51').get();
+        } else {
+            run = await client.actor('clockworks/tiktok-scraper').call(
+                TIKTOK_USER_SEARCH_NODE_NAME,
+                {
+                    searchQueries: state.searchTermsToScrape,
+                    resultsPerPage: 5,
+                    maxProfilesPerQuery: 50,
+                    searchSection: '/user',
+                },
+            );
+        }
 
-        const items = (await client.dataset(run.defaultDatasetId).listItems({ clean: true })).items as TikTokDatasetItem[];
+        const items = (await client.dataset(run!.defaultDatasetId).listItems({ clean: true })).items as TikTokDatasetItem[];
         const scrapedProfiles: Record<string, TikTokDatasetItem[]> = items.reduce((acc, item) => {
+            if (!item.authorMeta || !item.videoMeta) {
+                return acc;
+            }
             if (!acc[item.authorMeta.name]) {
                 acc[item.authorMeta.name] = [];
             }

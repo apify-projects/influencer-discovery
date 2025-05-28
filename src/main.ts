@@ -39,7 +39,7 @@ if (!openaiApiKey) {
 
 const agentModel = new ChatOpenAI({
     model: 'o3',
-    apiKey: openaiApiKey,
+    apiKey: process.env.API_KEY,
 });
 
 const chain = new StateGraph(StateAnnotation)
