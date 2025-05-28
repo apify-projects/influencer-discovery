@@ -6,6 +6,8 @@ import { CheerioCrawler, Dataset } from 'crawlee';
 import { ChatOpenAI } from '@langchain/openai';
 import { Influencer } from './types.js';
 import { StateAnnotation } from './state.js';
+import { evaluateProfiles } from './evaluate-profile.js';
+import { getTikTokProfile } from './tools.js';
 // this is ESM project, and as such, it requires you to specify extensions in your relative imports
 // read more about this here: https://nodejs.org/docs/latest-v18.x/api/esm.html#mandatory-file-extensions
 // note that we need to use `.js` even when inside TS files
@@ -28,8 +30,17 @@ const {
 const agentModel = new ChatOpenAI({});
 
 const chain = new StateGraph(StateAnnotation)
-    // TODO: add nodes
+    .addNode('getTikTokProfile', getTikTokProfile())
+    .addNode('evaluateProfiles', evaluateProfiles(agentModel))
+    .addEdge('__start__', 'getTikTokProfile')
+    .addEdge('getTikTokProfile', 'evaluateProfiles')
+    .addEdge('evaluateProfiles', '__end__')
     .compile();
+
+await chain.invoke({
+    profilesToEvaluate: { append: profiles },
+    influencerDescription,
+});
 
 // Gracefully exit the Actor process. It's recommended to quit all Actors with an exit()
 await Actor.exit();

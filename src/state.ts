@@ -18,7 +18,6 @@ export const StateAnnotation = Annotation.Root({
         },
         default: () => [],
     }),
-    // TODO: use typing
     scrapedProfiles: Annotation<Record<string, TikTokDatasetItem[]>>(),
     influencerDescription: Annotation<string>(),
 });
