@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { Dataset } from 'apify';
 import { State, StateAnnotation } from './state.js';
 import { SITE_NAME_FOR_LLM } from './consts.js';
+import { TikTokDatasetItem } from './types.js';
 
 const FIT_SCALE = {
     0.2: 'not a fit at all',
@@ -40,9 +41,10 @@ export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Pro
             },
             {
                 role: 'user',
-                // TODO: do not stringify
-                content: `Profile info: ${JSON.stringify(scrapedProfilesToEvaluate)}`
-                    // TODO: provide output JSON format
+                content: `Profile informations: ${scrapedProfilesToEvaluate.map((profile) => {
+                    return formatProfileInfoForLLM(profile);
+                }).join('\n\n')}`
+                    + '\n\n'
                     + `Task: assign a score to each profile determining how well it fits the following influencer description: `
                     + `"${influencerDescription}"`,
             },
@@ -50,8 +52,21 @@ export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Pro
     await Dataset.pushData(result);
     return {
         profilesToEvaluate: {
-            // TODO: use correct mapping
             remove: scrapedProfilesToEvaluate.map((profile) => profile[0].input),
         },
     };
+};
+
+export const formatProfileInfoForLLM = (profileVideos: TikTokDatasetItem[]): string => {
+    // TODO: consider formatting it more nicely than JSON.stringify
+    return `Profile: ${JSON.stringify(
+        profileVideos[0].authorMeta,
+    )}. It has the following videos: \n${profileVideos.map((video) => `- ${JSON.stringify({
+        collectCount: video.collectCount,
+        commentCount: video.commentCount,
+        diggCount: video.diggCount,
+        playCount: video.playCount,
+        shareCount: video.shareCount,
+        videoMeta: video.videoMeta,
+    } satisfies Partial<TikTokDatasetItem>)}`).join('\n')}`;
 };
