@@ -5,6 +5,7 @@ import { Actor } from 'apify';
 import { CheerioCrawler, Dataset } from 'crawlee';
 import { ChatOpenAI } from '@langchain/openai';
 import { Influencer } from './types.js';
+import { StateAnnotation } from './state.js';
 // this is ESM project, and as such, it requires you to specify extensions in your relative imports
 // read more about this here: https://nodejs.org/docs/latest-v18.x/api/esm.html#mandatory-file-extensions
 // note that we need to use `.js` even when inside TS files

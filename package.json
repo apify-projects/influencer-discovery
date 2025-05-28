@@ -11,6 +11,7 @@
 		"@langchain/langgraph": "^0.2.73",
 		"@langchain/openai": "^0.5.11",
 		"apify": "^3.2.6",
+		"apify-orchestrator": "^0.6.0",
 		"crawlee": "^3.11.5"
 	},
 	"devDependencies": {
