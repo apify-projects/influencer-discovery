@@ -1,6 +1,7 @@
 {
     "title": "Input schema for Influencer Discovery Agent",
     "description": "Provide a list of TikTok Usernames and a prompt on ",
+    "type": "object",
     "schemaVersion": 1,
     "properties": {
         "profiles": {
