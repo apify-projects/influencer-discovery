@@ -20,5 +20,6 @@ export const StateAnnotation = Annotation.Root({
     }),
     scrapedProfiles: Annotation<Record<string, TikTokDatasetItem[]>>(),
     influencerDescription: Annotation<string>(),
+    mock: Annotation<boolean>(),
 });
 export type State = typeof StateAnnotation.State;

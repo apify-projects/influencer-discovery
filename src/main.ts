@@ -16,6 +16,7 @@ import { getTikTokProfile } from './tools.js';
 interface Input {
     influencerDescription: string;
     profiles: string[];
+    mock?: boolean;
 }
 
 // The init() call configures the Actor for its environment. It's recommended to start every Actor with an init()
@@ -25,9 +26,10 @@ await Actor.init();
 const {
     influencerDescription,
     profiles = [],
+    mock = false,
 } = await Actor.getInput<Input>() ?? {} as Input;
 
-const agentModel = new ChatOpenAI({});
+const agentModel = new ChatOpenAI();
 
 const chain = new StateGraph(StateAnnotation)
     .addNode('getTikTokProfile', getTikTokProfile())
@@ -40,6 +42,7 @@ const chain = new StateGraph(StateAnnotation)
 await chain.invoke({
     profilesToEvaluate: { append: profiles },
     influencerDescription,
+    mock,
 });
 
 // Gracefully exit the Actor process. It's recommended to quit all Actors with an exit()

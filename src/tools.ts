@@ -7,15 +7,19 @@ export function getTikTokProfile() {
     return async (state: State) => {
         const nodeName = 'tiktok-profile';
         log.info(`[${nodeName}] Running graph node.`);
+        let run;
+        if (state.mock) {
+            run = await client.run('QcXzDNmbUVtZagcYt').get();
+        } else {
+            run = await client.actor('clockworks/tiktok-scraper').call(
+                nodeName, {
+                    profiles: state.profilesToEvaluate,
+                    resultsPerPage: 100,
+                },
+            );
+        }
 
-        const run = await client.actor('clockworks/tiktok-scraper').call(
-            nodeName, {
-                profiles: state.profilesToEvaluate,
-                resultsPerPage: 100,
-            },
-        );
-
-        const items = (await client.dataset(run.defaultDatasetId).listItems({ clean: true })).items as TikTokDatasetItem[];
+        const items = (await client.dataset(run!.defaultDatasetId).listItems({ clean: true })).items as TikTokDatasetItem[];
         const scrapedProfiles: Record<string, TikTokDatasetItem[]> = {};
         for (const profileName of state.profilesToEvaluate) {
             scrapedProfiles[profileName] = items.filter((item) => profileName === item.input);
