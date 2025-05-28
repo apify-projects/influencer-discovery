@@ -12,7 +12,8 @@
 		"@langchain/openai": "^0.5.11",
 		"apify": "^3.2.6",
 		"apify-orchestrator": "^0.6.0",
-		"crawlee": "^3.11.5"
+		"crawlee": "^3.11.5",
+		"zod": "^3.25.32"
 	},
 	"devDependencies": {
 		"@apify/eslint-config-ts": "^0.3.0",
