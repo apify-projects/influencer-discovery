@@ -9,13 +9,17 @@ import { TikTokDatasetItem } from './types.js';
  * Number of profiles to evaluate in one batch.
  */
 const BATCH_SIZE = 10;
+const CONCURRENT_CALLS = 5;
 export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Promise<typeof StateAnnotation.Update> => {
     const { influencerDescription, scrapedProfiles, profilesToLlm } = state;
-    const profileNames = profilesToLlm.slice(0, BATCH_SIZE);
-    const scrapedProfilesToEvaluate = profileNames.map((profileUrl) => {
+    const profileNameBatches = [];
+    for (let i = 0, j = 0; i < profilesToLlm.length && j < CONCURRENT_CALLS; i += BATCH_SIZE, j++) {
+        profileNameBatches.push(profilesToLlm.slice(i, i + BATCH_SIZE));
+    }
+    const scrapedProfilesToEvaluateInBatches = profileNameBatches.map((profileNames) => profileNames.map((profileUrl) => {
         const profile = scrapedProfiles[profileUrl];
         return profile;
-    })
+    }))
         .filter((profile) => profile !== undefined);
     const result = await model
         .withStructuredOutput(
@@ -34,9 +38,9 @@ export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Pro
                             fit: z.number().describe(`How well the profile fits the influencer description.`),
                             fitDescription: z.string().describe('Why such a fit score was given.'),
                         }),
-                    ).length(scrapedProfilesToEvaluate.length),
+                    ),
                 }))
-        .invoke([
+        .batch(scrapedProfilesToEvaluateInBatches.map((scrapedProfilesToEvaluate) => [
             {
                 role: 'system',
                 content: systemPrompt,
@@ -46,11 +50,11 @@ export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Pro
                 content: `Profile Information: ${scrapedProfilesToEvaluate.map((profile) => formatProfileInfoForLLM(profile)).join('\n\n')}`
                     + `Influencer Description: "${influencerDescription}"`,
             },
-        ]);
-    await Dataset.pushData(result.evaluatedProfiles);
+        ]));
+    await Dataset.pushData(result.map((evaluation) => evaluation.evaluatedProfiles).flat());
     return {
         profilesToLlm: {
-            remove: profileNames,
+            remove: profileNameBatches.flat(),
         },
     };
 };
