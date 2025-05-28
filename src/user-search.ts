@@ -26,6 +26,12 @@ export function performTikTokUserSearch() {
             return acc;
         }, {} as Record<string, TikTokDatasetItem[]>);
         return {
+            oldSearchTermsToScrape: {
+                append: state.searchTermsToScrape,
+            },
+            searchTermsToScrape: {
+                remove: state.searchTermsToScrape,
+            },
             scrapedProfiles,
             profilesToLlm: {
                 append: Object.keys(scrapedProfiles),

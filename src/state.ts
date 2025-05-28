@@ -60,6 +60,16 @@ export const StateAnnotation = Annotation.Root({
         reducer: arrayReducer<string>(),
         default: () => [],
     }),
+    /**
+     * Scraped search terms go here for deduping
+     */
+    oldSearchTermsToScrape: Annotation<string[], {
+        append?: string[],
+        remove?: string[],
+    }>({
+        reducer: arrayReducer<string>(),
+        default: () => [],
+    }),
     mock: Annotation<boolean>(),
 });
 
