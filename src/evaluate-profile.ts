@@ -71,6 +71,6 @@ export const formatProfileInfoForLLM = (profileVideos: TikTokDatasetItem[]): str
         diggCount: video.diggCount,
         playCount: video.playCount,
         shareCount: video.shareCount,
-        videoMeta: video.videoMeta,
-    } satisfies Partial<TikTokDatasetItem>)}`).join('\n')}`;
+        title: video.videoMeta.title,
+    })}`).join('\n')}`;
 };
