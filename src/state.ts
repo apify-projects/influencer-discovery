@@ -44,6 +44,7 @@ export const StateAnnotation = Annotation.Root({
         reducer: arrayReducer<string>(),
         default: () => [],
     }),
+    mock: Annotation<boolean>(),
 });
 
 export type State = typeof StateAnnotation.State;
