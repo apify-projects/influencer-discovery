@@ -15,6 +15,7 @@ import { ASK_LLM_FOR_QUERIES_NODE_NAME, askLlmForQueries } from './ask-llm-for-q
 
 interface Input {
     influencerDescription: string;
+    openaiApiKey?: string;
     profiles: string[];
     mock?: boolean;
 }
@@ -26,12 +27,19 @@ await Actor.init();
 const {
     influencerDescription,
     profiles = [],
+    openaiApiKey,
     mock = false,
 } = await Actor.getInput<Input>() ?? {} as Input;
 
+if (!openaiApiKey) {
+    throw await Actor.fail(
+        `The "openaiApiKey" input field is required. Please provide your OpenAI API key.`,
+    );
+}
+
 const agentModel = new ChatOpenAI({
     model: 'o3',
-    apiKey: 'API_KEY',
+    apiKey: openaiApiKey,
 });
 
 const chain = new StateGraph(StateAnnotation)

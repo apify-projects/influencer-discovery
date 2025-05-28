@@ -4,6 +4,13 @@
     "type": "object",
     "schemaVersion": 1,
     "properties": {
+        "openaiApiKey": {
+            "title": "OpenAI API key",
+            "type": "string",
+            "description": "The API key for accessing OpenAI. You can get it from <a href='https://platform.openai.com/account/api-keys' target='_blank' rel='noopener'>OpenAI platform</a>.",
+            "editor": "textfield",
+            "isSecret": true
+        },
         "profiles": {
             "title": "Usernames",
             "type": "array",
