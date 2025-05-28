@@ -10,7 +10,7 @@ export function performTikTokUserSearch() {
 
         let run;
         if (state.mock) {
-            run = await client.run('Fb9I5uJ0Kwd5nwN51').get();
+            run = await client.run('nyevW470e0sKvzw9T').get();
         } else {
             run = await client.actor('clockworks/tiktok-scraper').call(
                 TIKTOK_USER_SEARCH_NODE_NAME,

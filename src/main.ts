@@ -47,7 +47,12 @@ const chain = new StateGraph(StateAnnotation)
     .addNode('evaluateProfiles', evaluateProfiles(agentModel))
     .addNode(TIKTOK_USER_SEARCH_NODE_NAME, performTikTokUserSearch())
     .addEdge(GET_TIKTOK_PROFILE_NODE_NAME, 'evaluateProfiles')
-    .addEdge('evaluateProfiles', '__end__')
+    .addConditionalEdges('evaluateProfiles', (state) => {
+        if (state.profilesToLlm.length > 0) {
+            return 'evaluateProfiles';
+        }
+        return '__end__';
+    })
     .addNode(ASK_LLM_FOR_QUERIES_NODE_NAME, askLlmForQueries(agentModel))
     .addEdge(ASK_LLM_FOR_QUERIES_NODE_NAME, TIKTOK_USER_SEARCH_NODE_NAME)
     .addEdge(TIKTOK_USER_SEARCH_NODE_NAME, 'evaluateProfiles')
