@@ -24,12 +24,6 @@ const {
     profiles = [],
 } = await Actor.getInput<Input>() ?? {} as Input;
 
-const StateAnnotation = Annotation.Root({
-    profilesToEvaluate: Annotation<string[]>(),
-    foundInfliencers: Annotation<Influencer>(),
-    influencerDescription: Annotation<string>(),
-});
-
 const agentModel = new ChatOpenAI({});
 
 const chain = new StateGraph(StateAnnotation)
