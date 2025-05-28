@@ -14,6 +14,7 @@ export function performTikTokUserSearch() {
                 searchQueries: state.searchTermsToScrape,
                 resultsPerPage: 20,
                 maxProfilesPerQuery: 100,
+                searchSection: '/user',
             },
         );
 
