@@ -4,13 +4,6 @@
     "type": "object",
     "schemaVersion": 1,
     "properties": {
-        "openaiApiKey": {
-            "title": "OpenAI API key",
-            "type": "string",
-            "description": "The API key for accessing OpenAI. You can get it from <a href='https://platform.openai.com/account/api-keys' target='_blank' rel='noopener'>OpenAI platform</a>.",
-            "editor": "textfield",
-            "isSecret": true
-        },
         "profiles": {
             "title": "Usernames",
             "type": "array",
@@ -24,5 +17,5 @@
             "description": "Explain what are you looking for on the influencer, his style of content and engagement capability. Our Agent will evaluate your candidate and give a brief reasoning on if the candidate aligns well with your expectation."
         }
     },
-    "required": ["openaiApiKey", "influencerDescription"]
+    "required": ["influencerDescription"]
 }
