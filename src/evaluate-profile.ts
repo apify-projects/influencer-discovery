@@ -4,6 +4,7 @@ import { Dataset } from 'apify';
 import { State, StateAnnotation } from './state.js';
 import { systemPrompt } from './consts.js';
 import { TikTokDatasetItem } from './types.js';
+import { CHARGE_EVENT_NAMES, chargingManager } from './chargingManager.js';
 
 /**
  * Number of profiles to evaluate in one batch.
@@ -52,6 +53,7 @@ export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Pro
             },
         ]));
     await Dataset.pushData(result.map((evaluation) => evaluation.evaluatedProfiles).flat());
+    await chargingManager.charge({ eventName: CHARGE_EVENT_NAMES.PROFILE_OUTPUT, count: result.length });
     return {
         profilesToLlm: {
             remove: profileNameBatches.flat(),
