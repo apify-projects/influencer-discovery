@@ -1,6 +1,6 @@
 {
     "title": "Input schema for Influencer Discovery Agent",
-    "description": "Provide a list of TikTok Usernames and a prompt on ",
+    "description": "Provide a description of an influencer an the AI agents will look for a match on TikTok! You can also provide some usernames to perform an analysis on them.\nPlease note that you will also be charged for the TikTok Scraper run, per video per entered username accordingly. It can be up to $0.001 per username.",
     "type": "object",
     "schemaVersion": 1,
     "properties": {
@@ -14,7 +14,8 @@
             "title": "Influencer Description",
             "type": "string",
             "editor": "textarea",
-            "description": "Explain what are you looking for on the influencer, his style of content and engagement capability. Our Agent will evaluate your candidate and give a brief reasoning on if the candidate aligns well with your expectation."
+            "description": "Explain what are you looking for on the influencer, his style of content and engagement capability. Our Agent will evaluate your candidate and give a brief reasoning on if the candidate aligns well with your expectation.",
+            "prefill": "The influencer should be a well known persona in the gaming industry. The content should be fast paced, humorous and centered on gaming for young adults."
         }
     },
     "required": ["influencerDescription"]
