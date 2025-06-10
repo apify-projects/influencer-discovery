@@ -16,8 +16,8 @@ export function performTikTokUserSearch() {
                 TIKTOK_USER_SEARCH_NODE_NAME,
                 {
                     searchQueries: state.searchTermsToScrape,
-                    resultsPerPage: 5,
-                    maxProfilesPerQuery: 50,
+                    resultsPerPage: 1,
+                    maxProfilesPerQuery: 10,
                     searchSection: '/user',
                 },
             );

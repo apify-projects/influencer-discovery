@@ -15,7 +15,7 @@ export function getTikTokProfile() {
             run = await client.actor('clockworks/tiktok-scraper').call(
                 GET_TIKTOK_PROFILE_NODE_NAME, {
                     profiles: state.profilesToEvaluate,
-                    resultsPerPage: 100,
+                    resultsPerPage: 1,
                 },
             );
         }
