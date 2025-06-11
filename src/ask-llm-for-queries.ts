@@ -3,17 +3,16 @@ import z from 'zod';
 import { State, StateAnnotation } from './state.js';
 import { SITE_NAME_FOR_LLM } from './consts.js';
 
-const SEARCH_QUERIES_COUNT_BY_LLM = 5;
 export const ASK_LLM_FOR_QUERIES_NODE_NAME = 'ask-llm-for-queries';
 export const askLlmForQueries = (model: ChatOpenAI) => async (state: State): Promise<typeof StateAnnotation.Update> => {
-    const { influencerDescription } = state;
+    const { influencerDescription, generatedKeywords } = state;
     const result = await model
         .withStructuredOutput(
             z.object(
                 {
                     searchQueries: z.array(
                         z.string().describe('The search query used to find profiles in TikTok user search.'),
-                    ).length(SEARCH_QUERIES_COUNT_BY_LLM),
+                    ).length(generatedKeywords),
                 }))
         .invoke([
             {
@@ -25,7 +24,7 @@ export const askLlmForQueries = (model: ChatOpenAI) => async (state: State): Pro
             },
             {
                 role: 'user',
-                content: `Task: generate ${SEARCH_QUERIES_COUNT_BY_LLM} queries for TikTok `
+                content: `Task: generate ${generatedKeywords} queries for TikTok `
                     + `user search that will help me find the influencers fitting this description: `
                     + `"${influencerDescription}"`
                     + '\n\n'

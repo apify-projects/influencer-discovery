@@ -9,7 +9,7 @@
             "type": "array",
             "editor": "stringList",
             "description": "Add one or multiple TikTok usernames you want to evaluate as influencers.",
-            "prefill": "mrbeast"
+            "prefill": ["mrbeast"]
         },
         "influencerDescription": {
             "title": "Influencer Description",
@@ -27,7 +27,7 @@
             "default": 5,
             "unit": "keywords"
         },
-        "profilePerKeyword": {
+        "profilesPerKeyword": {
             "title": "Profile Per Keyword",
             "type": "integer",
             "description": "Number of profiles to be scraped per generated keyword. (max: 10)",

@@ -7,6 +7,7 @@ export const TIKTOK_USER_SEARCH_NODE_NAME = 'tiktok-user-search';
 export function performTikTokUserSearch() {
     return async (state: State): Promise<typeof StateAnnotation.Update> => {
         log.info(`[${TIKTOK_USER_SEARCH_NODE_NAME}] Running graph node.`);
+        const { profilesPerKeyword } = state;
 
         let run;
         if (state.mock) {
@@ -17,7 +18,7 @@ export function performTikTokUserSearch() {
                 {
                     searchQueries: state.searchTermsToScrape,
                     resultsPerPage: 1,
-                    maxProfilesPerQuery: 10,
+                    maxProfilesPerQuery: profilesPerKeyword,
                     searchSection: '/user',
                 },
             );

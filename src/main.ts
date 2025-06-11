@@ -1,6 +1,6 @@
 // Apify SDK - toolkit for building Apify Actors (Read more at https://docs.apify.com/sdk/js/)
 import { StateGraph } from '@langchain/langgraph';
-import { Actor } from 'apify';
+import { Actor, log } from 'apify';
 // Crawlee - web scraping and browser automation library (Read more at https://crawlee.dev)
 import { ChatOpenAI } from '@langchain/openai';
 import { StateAnnotation } from './state.js';
@@ -17,6 +17,8 @@ interface Input {
     influencerDescription: string;
     profiles: string[];
     mock?: boolean;
+    generatedKeywords: number;
+    profilesPerKeyword: number;
 }
 
 // The init() call configures the Actor for its environment. It's recommended to start every Actor with an init()
@@ -26,7 +28,15 @@ const {
     influencerDescription,
     profiles = [],
     mock = false,
+    generatedKeywords = 5,
+    profilesPerKeyword = 10,
 } = await Actor.getInput<Input>() ?? {} as Input;
+
+if (profiles.length > 0) {
+    log.info(`Using the provided username. No other influencer will be searched on TikTok.`);
+} else {
+    log.info(`Generating keywords and looking for suitable influencer. Max number of influencer scraped: ${generatedKeywords * profilesPerKeyword}`);
+}
 
 const agentModel = new ChatOpenAI({
     model: 'o3',
@@ -62,6 +72,8 @@ await chain.invoke({
     profilesToEvaluate: { append: profiles },
     influencerDescription,
     mock,
+    generatedKeywords,
+    profilesPerKeyword,
 });
 
 // Gracefully exit the Actor process. It's recommended to quit all Actors with an exit()
