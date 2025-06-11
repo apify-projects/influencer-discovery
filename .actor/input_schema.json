@@ -1,6 +1,6 @@
 {
     "title": "Input schema for Influencer Discovery Agent",
-    "description": "Provide a description of an influencer an the AI agents will look for a match on TikTok! You can also provide some usernames to perform an analysis on them.\nPlease note that you will also be charged for the TikTok Scraper run, per video per entered username accordingly. It can be up to $0.001 per username.",
+    "description": "Provide a description of an influencer you'd like to find and the AI agent will look for a match on TikTok for you. You can also provide some usernames to perform an analysis on them.\nPlease note that you will also be charged for the TikTok Scraper run, per video per entered username accordingly. It can be up to $0.0037 per username.",
     "type": "object",
     "schemaVersion": 1,
     "properties": {
