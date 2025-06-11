@@ -11,7 +11,8 @@
             "description": "Add one or multiple TikTok usernames you want to evaluate as influencers.",
             "prefill": [
                 "mrbeast"
-            ]
+            ],
+            "nullable": false
         },
         "influencerDescription": {
             "title": "Influencer Description",
