@@ -30,6 +30,7 @@ export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Pro
                         z.object({
                             // TODO: specify under what key/where it is provided
                             profile: z.string().describe('The profile handle, as provided in the input.'),
+                            profileUrl: z.string().describe('The url of the profile on TikTok'),
                             engagement: z.number().describe(
                                 `The engagement rate of the influencer calculated like this: (total engagement / total followers) `
                                 + `x 100, where total engagement = reactions + shares + comments`,

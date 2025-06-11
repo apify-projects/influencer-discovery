@@ -71,6 +71,8 @@ export const StateAnnotation = Annotation.Root({
         default: () => [],
     }),
     mock: Annotation<boolean>(),
+    generatedKeywords: Annotation<number>(),
+    profilesPerKeyword: Annotation<number>(),
 });
 
 export type State = typeof StateAnnotation.State;
