@@ -15,7 +15,7 @@ import { ASK_LLM_FOR_QUERIES_NODE_NAME, askLlmForQueries } from './ask-llm-for-q
 
 interface Input {
     influencerDescription: string;
-    profiles: string[];
+    usernames: string[];
     mock?: boolean;
     generatedKeywords: number;
     profilesPerKeyword: number;
@@ -26,13 +26,13 @@ await Actor.init();
 // Structure of input is defined in input_schema.json
 const {
     influencerDescription,
-    profiles = [],
+    usernames = [],
     mock = false,
     generatedKeywords = 5,
     profilesPerKeyword = 10,
 } = await Actor.getInput<Input>() ?? {} as Input;
 
-if (profiles.length > 0) {
+if (usernames.length > 0) {
     log.info(`Using the provided username. No other influencer will be searched on TikTok.`);
 } else {
     log.info(`Generating keywords and looking for suitable influencer. Max number of influencer scraped: ${generatedKeywords * profilesPerKeyword}`);
@@ -69,7 +69,7 @@ const chain = new StateGraph(StateAnnotation)
     .compile();
 
 await chain.invoke({
-    profilesToEvaluate: { append: profiles },
+    profilesToEvaluate: { append: usernames },
     influencerDescription,
     mock,
     generatedKeywords,

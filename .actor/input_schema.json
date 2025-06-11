@@ -4,12 +4,14 @@
     "type": "object",
     "schemaVersion": 1,
     "properties": {
-        "profiles": {
+        "usernames": {
             "title": "Usernames",
             "type": "array",
             "editor": "stringList",
             "description": "Add one or multiple TikTok usernames you want to evaluate as influencers.",
-            "prefill": ["mrbeast"]
+            "prefill": [
+                "mrbeast"
+            ]
         },
         "influencerDescription": {
             "title": "Influencer Description",
