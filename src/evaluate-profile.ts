@@ -35,7 +35,7 @@ export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Pro
                                 `The engagement rate of the influencer calculated like this: (total engagement / total followers) `
                                 + `x 100, where total engagement = reactions + shares + comments`,
                             ),
-                            postOnAveragePerWeek: z.number().describe(`How many videos per week are posted by the influencer.`),
+                            averagePostPerWeek: z.number().describe(`How many videos per week are posted by the influencer.`),
                             country: z.string().describe(`The nationality of the influencer, where do they post from.`),
                             fit: z.number().describe(`How well the profile fits the influencer description.`),
                             fitDescription: z.string().describe('Why such a fit score was given.'),
