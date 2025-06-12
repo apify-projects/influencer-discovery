@@ -4,6 +4,8 @@
 	"title": "Influencer Discover Agent",
 	"description": "Find the perfect influencer to boost your product on Social Medias!",
 	"version": "0.0",
+    "minMemoryMbytes": 1024,
+    "maxMemoryMbytes": 1024,
 	"meta": {
 		"templateId": "ts-crawlee-cheerio"
 	},
