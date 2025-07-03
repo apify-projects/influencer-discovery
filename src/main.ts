@@ -1,6 +1,5 @@
 import { StateGraph } from '@langchain/langgraph';
 import { Actor, log } from 'apify';
-import { ChatOpenAI } from '@langchain/openai';
 import { StateAnnotation } from './state.js';
 import { evaluateProfiles } from './evaluate-profile.js';
 import { GET_TIKTOK_PROFILE_NODE_NAME, getTikTokProfile } from './tools.js';
@@ -24,25 +23,10 @@ if (usernames.length > 0) {
     log.info(`Generating keywords and looking for suitable influencer. Max number of influencer scraped: ${generatedKeywords * profilesPerKeyword}`);
 }
 
-const agentModel = new ChatOpenAI({
-    model: 'o3',
-    apiKey: process.env.APIKEY,
-});
-
 const chain = new StateGraph(StateAnnotation)
     .addNode(GET_TIKTOK_PROFILE_NODE_NAME, getTikTokProfile())
-    .addNode('evaluateProfiles', evaluateProfiles(agentModel))
+    .addNode('evaluateProfiles', evaluateProfiles())
     .addNode(TIKTOK_USER_SEARCH_NODE_NAME, performTikTokUserSearch())
-    .addEdge(GET_TIKTOK_PROFILE_NODE_NAME, 'evaluateProfiles')
-    .addConditionalEdges('evaluateProfiles', (state) => {
-        if (state.profilesToLlm.length > 0) {
-            return 'evaluateProfiles';
-        }
-        return '__end__';
-    })
-    .addNode(ASK_LLM_FOR_QUERIES_NODE_NAME, askLlmForQueries(agentModel))
-    .addEdge(ASK_LLM_FOR_QUERIES_NODE_NAME, TIKTOK_USER_SEARCH_NODE_NAME)
-    .addEdge(TIKTOK_USER_SEARCH_NODE_NAME, 'evaluateProfiles')
     .addConditionalEdges('__start__', (state) => {
         const nextEdges = [];
         if (state.profilesToEvaluate.length > 0) {
@@ -52,6 +36,17 @@ const chain = new StateGraph(StateAnnotation)
         }
         return nextEdges;
     })
+    .addEdge(GET_TIKTOK_PROFILE_NODE_NAME, 'evaluateProfiles')
+    // Recursive call to LLM if there are more profiles to evaluate
+    .addConditionalEdges('evaluateProfiles', (state) => {
+        if (state.profilesToLlm.length > 0) {
+            return 'evaluateProfiles';
+        }
+        return '__end__';
+    })
+    .addNode(ASK_LLM_FOR_QUERIES_NODE_NAME, askLlmForQueries())
+    .addEdge(ASK_LLM_FOR_QUERIES_NODE_NAME, TIKTOK_USER_SEARCH_NODE_NAME)
+    .addEdge(TIKTOK_USER_SEARCH_NODE_NAME, 'evaluateProfiles')
     .compile();
 
 await chain.invoke({
@@ -62,7 +57,6 @@ await chain.invoke({
     profilesPerKeyword,
 });
 
-// Gracefully exit the Actor process. It's recommended to quit all Actors with an exit()
 await Actor.exit();
 
 async function getInput(): Promise<Input> {

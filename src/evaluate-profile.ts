@@ -11,7 +11,11 @@ import { CHARGE_EVENT_NAMES, chargingManager } from './chargingManager.js';
  */
 const BATCH_SIZE = 10;
 const CONCURRENT_CALLS = 5;
-export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Promise<typeof StateAnnotation.Update> => {
+export const evaluateProfiles = () => async (state: State): Promise<typeof StateAnnotation.Update> => {
+    const model = new ChatOpenAI({
+        model: 'o3',
+        apiKey: process.env.APIKEY,
+    });
     const { influencerDescription, scrapedProfiles, profilesToLlm } = state;
     const profileNameBatches = [];
     for (let i = 0, j = 0; i < profilesToLlm.length && j < CONCURRENT_CALLS; i += BATCH_SIZE, j++) {

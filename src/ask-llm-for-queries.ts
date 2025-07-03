@@ -4,7 +4,11 @@ import { State, StateAnnotation } from './state.js';
 import { SITE_NAME_FOR_LLM } from './consts.js';
 
 export const ASK_LLM_FOR_QUERIES_NODE_NAME = 'ask-llm-for-queries';
-export const askLlmForQueries = (model: ChatOpenAI) => async (state: State): Promise<typeof StateAnnotation.Update> => {
+export const askLlmForQueries = () => async (state: State): Promise<typeof StateAnnotation.Update> => {
+    const model = new ChatOpenAI({
+        model: 'o3',
+        apiKey: process.env.APIKEY,
+    });
     const { influencerDescription, generatedKeywords } = state;
     const result = await model
         .withStructuredOutput(
