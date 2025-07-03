@@ -1,5 +1,5 @@
 import { log } from 'crawlee';
-import { client } from './orchestrator.js';
+import { orchestrator } from './orchestrator.js';
 import type { State, StateAnnotation } from './state.js';
 import type { TikTokDatasetItem } from './types.js';
 
@@ -8,6 +8,7 @@ export function performTikTokUserSearch() {
     return async (state: State): Promise<typeof StateAnnotation.Update> => {
         log.info(`[${TIKTOK_USER_SEARCH_NODE_NAME}] Running graph node.`);
         const { profilesPerKeyword } = state;
+        const client = await orchestrator.apifyClient();
 
         let run;
         if (state.mock) {
