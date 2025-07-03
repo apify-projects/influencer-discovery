@@ -1,5 +1,5 @@
 import { Annotation } from '@langchain/langgraph';
-import type { TikTokDatasetItem } from './types.js';
+import type { TikTokDatasetItem } from '../types.js';
 
 const arrayReducer = <T>() => (
     state: T[],

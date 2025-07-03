@@ -1,17 +1,23 @@
 import { ChatOpenAI } from '@langchain/openai';
 import { z } from 'zod';
-import { Dataset } from 'apify';
-import { State, StateAnnotation } from './state.js';
-import { systemPrompt } from './consts.js';
-import { TikTokDatasetItem } from './types.js';
-import { CHARGE_EVENT_NAMES, chargingManager } from './chargingManager.js';
+import { Dataset, log } from 'apify';
+import { State, StateAnnotation } from '../../state.js';
+import { evaluateProfileSystemPrompt } from '../../../prompts.js';
+import { TikTokDatasetItem } from '../../../types.js';
+import { CHARGE_EVENT_NAMES, chargeEvent } from '../../../chargingManager.js';
+import { EVALUATE_PROFILES_NODE_NAME } from '../../../consts.js';
 
 /**
  * Number of profiles to evaluate in one batch.
  */
 const BATCH_SIZE = 10;
 const CONCURRENT_CALLS = 5;
-export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Promise<typeof StateAnnotation.Update> => {
+export const evaluateProfiles = () => async (state: State): Promise<typeof StateAnnotation.Update> => {
+    log.info(`[${EVALUATE_PROFILES_NODE_NAME}] Evaluating profiles.`);
+    const model = new ChatOpenAI({
+        model: 'o3',
+        apiKey: process.env.APIKEY,
+    });
     const { influencerDescription, scrapedProfiles, profilesToLlm } = state;
     const profileNameBatches = [];
     for (let i = 0, j = 0; i < profilesToLlm.length && j < CONCURRENT_CALLS; i += BATCH_SIZE, j++) {
@@ -45,7 +51,7 @@ export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Pro
         .batch(scrapedProfilesToEvaluateInBatches.map((scrapedProfilesToEvaluate) => [
             {
                 role: 'system',
-                content: systemPrompt,
+                content: evaluateProfileSystemPrompt,
             },
             {
                 role: 'user',
@@ -54,7 +60,7 @@ export const evaluateProfiles = (model: ChatOpenAI) => async (state: State): Pro
             },
         ]));
     await Dataset.pushData(result.map((evaluation) => evaluation.evaluatedProfiles).flat());
-    await chargingManager.charge({ eventName: CHARGE_EVENT_NAMES.PROFILE_OUTPUT, count: result.length });
+    await chargeEvent({ eventName: CHARGE_EVENT_NAMES.PROFILE_OUTPUT, count: result.length });
     return {
         profilesToLlm: {
             remove: profileNameBatches.flat(),
