@@ -2,8 +2,8 @@ import { log } from 'crawlee';
 import { orchestrator } from '../../../orchestrator.js';
 import type { State, StateAnnotation } from '../../state.js';
 import type { TikTokDatasetItem } from '../../../types.js';
+import { MOCK_USER_SEARCH_RUN_ID, TIKTOK_USER_SEARCH_NODE_NAME } from '../../../consts.js';
 
-export const TIKTOK_USER_SEARCH_NODE_NAME = 'tiktok-user-search';
 export function performTikTokUserSearch() {
     return async (state: State): Promise<typeof StateAnnotation.Update> => {
         log.info(`[${TIKTOK_USER_SEARCH_NODE_NAME}] Running graph node.`);
@@ -12,7 +12,7 @@ export function performTikTokUserSearch() {
 
         let run;
         if (state.mock) {
-            run = await client.run('nyevW470e0sKvzw9T').get();
+            run = await client.run(MOCK_USER_SEARCH_RUN_ID).get();
         } else {
             run = await client.actor('clockworks/tiktok-scraper').call(
                 TIKTOK_USER_SEARCH_NODE_NAME,

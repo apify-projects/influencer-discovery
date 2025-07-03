@@ -2,7 +2,7 @@ import { ChatOpenAI } from '@langchain/openai';
 import { z } from 'zod';
 import { Dataset } from 'apify';
 import { State, StateAnnotation } from '../../state.js';
-import { systemPrompt } from '../../../consts.js';
+import { evaluateProfileSystemPrompt } from '../../../prompts.js';
 import { TikTokDatasetItem } from '../../../types.js';
 import { CHARGE_EVENT_NAMES, chargeEvent } from '../../../chargingManager.js';
 
@@ -49,7 +49,7 @@ export const evaluateProfiles = () => async (state: State): Promise<typeof State
         .batch(scrapedProfilesToEvaluateInBatches.map((scrapedProfilesToEvaluate) => [
             {
                 role: 'system',
-                content: systemPrompt,
+                content: evaluateProfileSystemPrompt,
             },
             {
                 role: 'user',

@@ -2,8 +2,8 @@ import { log } from 'crawlee';
 import { orchestrator } from '../../../orchestrator.js';
 import type { State, StateAnnotation } from '../../state.js';
 import type { TikTokDatasetItem } from '../../../types.js';
+import { GET_TIKTOK_PROFILE_NODE_NAME, MOCK_GET_PROFILE_INFO_RUN_ID } from '../../../consts.js';
 
-export const GET_TIKTOK_PROFILE_NODE_NAME = 'tiktok-profile';
 export function getTikTokProfile() {
     return async (state: State): Promise<typeof StateAnnotation.Update> => {
         log.info(`[${GET_TIKTOK_PROFILE_NODE_NAME}] Running graph node.`);
@@ -11,7 +11,7 @@ export function getTikTokProfile() {
 
         let run;
         if (state.mock) {
-            run = await client.run('QcXzDNmbUVtZagcYt').get();
+            run = await client.run(MOCK_GET_PROFILE_INFO_RUN_ID).get();
         } else {
             run = await client.actor('clockworks/tiktok-scraper').call(
                 GET_TIKTOK_PROFILE_NODE_NAME, {
