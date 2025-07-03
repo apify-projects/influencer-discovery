@@ -1,10 +1,10 @@
 import { ChatOpenAI } from '@langchain/openai';
 import { z } from 'zod';
 import { Dataset } from 'apify';
-import { State, StateAnnotation } from './state.js';
-import { systemPrompt } from './consts.js';
-import { TikTokDatasetItem } from './types.js';
-import { CHARGE_EVENT_NAMES, chargeEvent } from './chargingManager.js';
+import { State, StateAnnotation } from '../../state.js';
+import { systemPrompt } from '../../../consts.js';
+import { TikTokDatasetItem } from '../../../types.js';
+import { CHARGE_EVENT_NAMES, chargeEvent } from '../../../chargingManager.js';
 
 /**
  * Number of profiles to evaluate in one batch.

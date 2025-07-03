@@ -1,7 +1,7 @@
 import { log } from 'crawlee';
-import { orchestrator } from './orchestrator.js';
-import type { State, StateAnnotation } from './state.js';
-import type { TikTokDatasetItem } from './types.js';
+import { orchestrator } from '../../../orchestrator.js';
+import type { State, StateAnnotation } from '../../state.js';
+import type { TikTokDatasetItem } from '../../../types.js';
 
 export const GET_TIKTOK_PROFILE_NODE_NAME = 'tiktok-profile';
 export function getTikTokProfile() {

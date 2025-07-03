@@ -1,7 +1,7 @@
 import { log } from 'crawlee';
-import { orchestrator } from './orchestrator.js';
-import type { State, StateAnnotation } from './state.js';
-import type { TikTokDatasetItem } from './types.js';
+import { orchestrator } from '../../../orchestrator.js';
+import type { State, StateAnnotation } from '../../state.js';
+import type { TikTokDatasetItem } from '../../../types.js';
 
 export const TIKTOK_USER_SEARCH_NODE_NAME = 'tiktok-user-search';
 export function performTikTokUserSearch() {

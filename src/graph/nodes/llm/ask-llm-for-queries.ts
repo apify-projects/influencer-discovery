@@ -1,7 +1,7 @@
 import { ChatOpenAI } from '@langchain/openai';
 import z from 'zod';
-import { State, StateAnnotation } from './state.js';
-import { SITE_NAME_FOR_LLM } from './consts.js';
+import { State, StateAnnotation } from '../../state.js';
+import { SITE_NAME_FOR_LLM } from '../../../consts.js';
 
 export const ASK_LLM_FOR_QUERIES_NODE_NAME = 'ask-llm-for-queries';
 export const askLlmForQueries = () => async (state: State): Promise<typeof StateAnnotation.Update> => {
