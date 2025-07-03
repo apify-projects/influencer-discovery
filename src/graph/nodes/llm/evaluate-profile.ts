@@ -1,10 +1,11 @@
 import { ChatOpenAI } from '@langchain/openai';
 import { z } from 'zod';
-import { Dataset } from 'apify';
+import { Dataset, log } from 'apify';
 import { State, StateAnnotation } from '../../state.js';
 import { evaluateProfileSystemPrompt } from '../../../prompts.js';
 import { TikTokDatasetItem } from '../../../types.js';
 import { CHARGE_EVENT_NAMES, chargeEvent } from '../../../chargingManager.js';
+import { EVALUATE_PROFILES_NODE_NAME } from '../../../consts.js';
 
 /**
  * Number of profiles to evaluate in one batch.
@@ -12,6 +13,7 @@ import { CHARGE_EVENT_NAMES, chargeEvent } from '../../../chargingManager.js';
 const BATCH_SIZE = 10;
 const CONCURRENT_CALLS = 5;
 export const evaluateProfiles = () => async (state: State): Promise<typeof StateAnnotation.Update> => {
+    log.info(`[${EVALUATE_PROFILES_NODE_NAME}] Evaluating profiles.`);
     const model = new ChatOpenAI({
         model: 'o3',
         apiKey: process.env.APIKEY,

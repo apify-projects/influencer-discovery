@@ -1,9 +1,12 @@
 import { ChatOpenAI } from '@langchain/openai';
 import z from 'zod';
+import { log } from 'crawlee';
 import { State, StateAnnotation } from '../../state.js';
 import { askForQueriesSystemPrompt } from '../../../prompts.js';
+import { ASK_FOR_QUERIES_NODE_NAME } from '../../../consts.js';
 
-export const askLlmForQueries = () => async (state: State): Promise<typeof StateAnnotation.Update> => {
+export const askForQueries = () => async (state: State): Promise<typeof StateAnnotation.Update> => {
+    log.info(`[${ASK_FOR_QUERIES_NODE_NAME}] Asking for queries.`);
     const model = new ChatOpenAI({
         model: 'o3',
         apiKey: process.env.APIKEY,

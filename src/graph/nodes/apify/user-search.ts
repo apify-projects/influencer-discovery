@@ -6,7 +6,7 @@ import { MOCK_USER_SEARCH_RUN_ID, TIKTOK_USER_SEARCH_NODE_NAME } from '../../../
 
 export function performTikTokUserSearch() {
     return async (state: State): Promise<typeof StateAnnotation.Update> => {
-        log.info(`[${TIKTOK_USER_SEARCH_NODE_NAME}] Running graph node.`);
+        log.info(`[${TIKTOK_USER_SEARCH_NODE_NAME}] Searching for influencer.`);
         const { profilesPerKeyword } = state;
         const client = await orchestrator.apifyClient();
 
@@ -26,6 +26,8 @@ export function performTikTokUserSearch() {
         }
 
         const items = (await client.dataset(run!.defaultDatasetId).listItems({ clean: true })).items as TikTokDatasetItem[];
+
+        // Avoid collecting items without authorMeta or videoMeta
         const scrapedProfiles: Record<string, TikTokDatasetItem[]> = items.reduce((acc, item) => {
             if (!item.authorMeta || !item.videoMeta) {
                 return acc;
@@ -36,6 +38,7 @@ export function performTikTokUserSearch() {
             acc[item.authorMeta.name].push(item);
             return acc;
         }, {} as Record<string, TikTokDatasetItem[]>);
+
         return {
             oldSearchTermsToScrape: {
                 append: state.searchTermsToScrape,

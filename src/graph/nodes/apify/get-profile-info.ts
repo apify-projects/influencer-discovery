@@ -6,7 +6,7 @@ import { GET_TIKTOK_PROFILE_NODE_NAME, MOCK_GET_PROFILE_INFO_RUN_ID } from '../.
 
 export function getTikTokProfile() {
     return async (state: State): Promise<typeof StateAnnotation.Update> => {
-        log.info(`[${GET_TIKTOK_PROFILE_NODE_NAME}] Running graph node.`);
+        log.info(`[${GET_TIKTOK_PROFILE_NODE_NAME}] Collecting TikTok profiles information.`);
         const client = await orchestrator.apifyClient();
 
         let run;
@@ -22,9 +22,12 @@ export function getTikTokProfile() {
         }
         const items = (await client.dataset(run!.defaultDatasetId).listItems({ clean: true })).items as TikTokDatasetItem[];
         const scrapedProfiles: Record<string, TikTokDatasetItem[]> = {};
+
+        // Avoid collecting error items
         for (const profileName of state.profilesToEvaluate) {
             scrapedProfiles[profileName] = items.filter((item) => profileName === item.input);
         }
+
         return {
             scrapedProfiles,
             profilesToLlm: {
