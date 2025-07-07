@@ -1,3 +1,11 @@
+export interface Input {
+    influencerDescription: string;
+    usernames: string[];
+    mock?: boolean;
+    generatedKeywords: number;
+    profilesPerKeyword: number;
+}
+
 export type Influencer = {
     url: string;
 }

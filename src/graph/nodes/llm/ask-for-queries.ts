@@ -1,10 +1,16 @@
 import { ChatOpenAI } from '@langchain/openai';
 import z from 'zod';
-import { State, StateAnnotation } from './state.js';
-import { SITE_NAME_FOR_LLM } from './consts.js';
+import { log } from 'crawlee';
+import { State, StateAnnotation } from '../../state.js';
+import { askForQueriesSystemPrompt } from '../../../prompts.js';
+import { ASK_FOR_QUERIES_NODE_NAME } from '../../../consts.js';
 
-export const ASK_LLM_FOR_QUERIES_NODE_NAME = 'ask-llm-for-queries';
-export const askLlmForQueries = (model: ChatOpenAI) => async (state: State): Promise<typeof StateAnnotation.Update> => {
+export const askForQueries = () => async (state: State): Promise<typeof StateAnnotation.Update> => {
+    log.info(`[${ASK_FOR_QUERIES_NODE_NAME}] Asking for queries.`);
+    const model = new ChatOpenAI({
+        model: 'o3',
+        apiKey: process.env.APIKEY,
+    });
     const { influencerDescription, generatedKeywords } = state;
     const result = await model
         .withStructuredOutput(
@@ -17,10 +23,7 @@ export const askLlmForQueries = (model: ChatOpenAI) => async (state: State): Pro
         .invoke([
             {
                 role: 'system',
-                content: `You are a helpful assistant that wants to find profiles on ${SITE_NAME_FOR_LLM} `
-                    + `that are good influencers according to the description given by the user. `
-                    + `For that purpose a TikTok search in "Users" section will be performed.`
-                    + ` You generate search queries capable of yielding the best search results, according to the given description.`,
+                content: askForQueriesSystemPrompt,
             },
             {
                 role: 'user',
