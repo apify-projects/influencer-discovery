@@ -59,8 +59,15 @@ export const evaluateProfiles = () => async (state: State): Promise<typeof State
                     + `Influencer Description: "${influencerDescription}"`,
             },
         ]));
-    await Dataset.pushData(result.map((evaluation) => evaluation.evaluatedProfiles).flat());
-    await chargeEvent({ eventName: CHARGE_EVENT_NAMES.PROFILE_OUTPUT, count: result.length });
+    const flattedResults = result.flat().map((evaluation) => evaluation.evaluatedProfiles).flat();
+    const completedOutput = flattedResults.map((influencer) => {
+        return {
+            ...influencer,
+            influencerMetadata: scrapedProfiles[influencer.profile][0].authorMeta, // TODO simplify this.
+        };
+    });
+    await Dataset.pushData(completedOutput);
+    await chargeEvent({ eventName: CHARGE_EVENT_NAMES.PROFILE_OUTPUT, count: completedOutput.length });
     return {
         profilesToLlm: {
             remove: profileNameBatches.flat(),
