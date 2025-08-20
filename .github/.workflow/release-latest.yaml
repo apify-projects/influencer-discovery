@@ -1,0 +1,10 @@
+name: Release latest
+
+on:
+    push:
+        branches: [ master ]
+
+jobs:
+    buildLatest:
+        uses: apify-store/github-actions-source/.github/workflows/push-build-latest.yaml@master
+        secrets: inherit
