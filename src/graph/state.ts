@@ -1,5 +1,5 @@
 import { Annotation } from '@langchain/langgraph';
-import type { TikTokDatasetItem } from '../types.js';
+import type { ProfileInformation } from '../types.js';
 
 const arrayReducer = <T>() => (
     state: T[],
@@ -28,7 +28,7 @@ export const StateAnnotation = Annotation.Root({
     /**
      * Scraped profiles, both from search and input
      */
-    scrapedProfiles: Annotation<Record<string, TikTokDatasetItem[]>, Record<string, TikTokDatasetItem[]>>({
+    scrapedProfiles: Annotation<Record<string, ProfileInformation>, Record<string, ProfileInformation>>({
         reducer: (state, update) => {
             const newState = { ...state };
             Object.entries(update).forEach(([key, value]) => {
@@ -42,6 +42,9 @@ export const StateAnnotation = Annotation.Root({
         },
         default: () => ({}),
     }),
+    /**
+     * Array of profile names whose information will be passed to the LLM for evaluation.
+     */
     profilesToLlm: Annotation<string[], {
         append?: string[],
         remove?: string[],

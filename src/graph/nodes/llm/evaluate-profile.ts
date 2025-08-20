@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { Dataset, log } from 'apify';
 import { State, StateAnnotation } from '../../state.js';
 import { evaluateProfileSystemPrompt } from '../../../prompts.js';
-import { TikTokDatasetItem } from '../../../types.js';
+import { type ProfileInformation } from '../../../types.js';
 import { CHARGE_EVENT_NAMES, chargeEvent } from '../../../chargingManager.js';
 import { EVALUATE_PROFILES_NODE_NAME } from '../../../consts.js';
 
@@ -23,8 +23,8 @@ export const evaluateProfiles = () => async (state: State): Promise<typeof State
     for (let i = 0, j = 0; i < profilesToLlm.length && j < CONCURRENT_CALLS; i += BATCH_SIZE, j++) {
         profileNameBatches.push(profilesToLlm.slice(i, i + BATCH_SIZE));
     }
-    const scrapedProfilesToEvaluateInBatches = profileNameBatches.map((profileNames) => profileNames.map((profileUrl) => {
-        const profile = scrapedProfiles[profileUrl];
+    const scrapedProfilesToEvaluateInBatches = profileNameBatches.map((profileNames) => profileNames.map((profileName) => {
+        const profile = scrapedProfiles[profileName];
         return profile;
     }))
         .filter((profile) => profile !== undefined);
@@ -35,7 +35,7 @@ export const evaluateProfiles = () => async (state: State): Promise<typeof State
                     evaluatedProfiles: z.array(
                         z.object({
                             // TODO: specify under what key/where it is provided
-                            profile: z.string().describe('The profile handle, as provided in the input.'),
+                            profile: z.string().describe('The profile name, as provided in the authorMeta input of the profile.'),
                             profileUrl: z.string().describe('The url of the profile on TikTok'),
                             engagement: z.number().describe(
                                 `The engagement rate of the influencer calculated like this: (total engagement / total followers) `
@@ -63,7 +63,8 @@ export const evaluateProfiles = () => async (state: State): Promise<typeof State
     const completedOutput = flattedResults.map((influencer) => {
         return {
             ...influencer,
-            influencerMetadata: scrapedProfiles[influencer.profile][0].authorMeta, // TODO simplify this.
+            // TODO: handle edgecase of profile string being different in AI output
+            influencerMetadata: scrapedProfiles[influencer.profile].authorMeta,
         };
     });
     await Dataset.pushData(completedOutput);
@@ -75,16 +76,17 @@ export const evaluateProfiles = () => async (state: State): Promise<typeof State
     };
 };
 
-export const formatProfileInfoForLLM = (profileVideos: TikTokDatasetItem[]): string => {
-    // TODO: consider formatting it more nicely than JSON.stringify
-    return `Profile: ${JSON.stringify(
-        profileVideos[0].authorMeta,
-    )}. It has the following videos: \n${profileVideos.map((video) => `- ${JSON.stringify({
-        collectCount: video.collectCount,
-        commentCount: video.commentCount,
-        diggCount: video.diggCount,
-        playCount: video.playCount,
-        shareCount: video.shareCount,
-        title: video.videoMeta.title,
-    })}`).join('\n')}`;
+export const formatProfileInfoForLLM = (profileInformation: ProfileInformation): string => {
+    const videosInformation = profileInformation.videos.map((video) => {
+        return Object.entries(video).map(([key, value]) => {
+            return `${key}: ${value}`;
+        }).join('\n');
+    }).join('\n');
+
+    const authorInformation = Object.entries(profileInformation.authorMeta).map(([key, value]) => {
+        return `${key}: ${value}`;
+    }).join('\n');
+
+    const profileInfo = `Profile:\n${authorInformation}.\n\nVideos from this profile:\n${videosInformation}\n`;
+    return profileInfo;
 };
