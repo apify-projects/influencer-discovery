@@ -1,5 +1,6 @@
 import { StateGraph } from '@langchain/langgraph';
 import { log } from 'apify';
+import type { ExtendedApifyClient } from 'apify-orchestrator';
 import { StateAnnotation } from './state.js';
 import { getTikTokProfile } from './nodes/apify/get-profile-info.js';
 import { performTikTokUserSearch } from './nodes/apify/user-search.js';
@@ -7,11 +8,11 @@ import { askForQueries } from './nodes/llm/ask-for-queries.js';
 import { evaluateProfiles } from './nodes/llm/evaluate-profile.js';
 import { GET_TIKTOK_PROFILE_NODE_NAME, TIKTOK_USER_SEARCH_NODE_NAME, ASK_FOR_QUERIES_NODE_NAME, EVALUATE_PROFILES_NODE_NAME } from '../consts.js';
 
-export function initializeGraph() {
+export function initializeGraph(apifyClient: ExtendedApifyClient) {
     return new StateGraph(StateAnnotation)
-        .addNode(GET_TIKTOK_PROFILE_NODE_NAME, getTikTokProfile())
+        .addNode(GET_TIKTOK_PROFILE_NODE_NAME, getTikTokProfile(apifyClient))
         .addNode(EVALUATE_PROFILES_NODE_NAME, evaluateProfiles())
-        .addNode(TIKTOK_USER_SEARCH_NODE_NAME, performTikTokUserSearch())
+        .addNode(TIKTOK_USER_SEARCH_NODE_NAME, performTikTokUserSearch(apifyClient))
         .addConditionalEdges('__start__', (state) => {
             const nextEdges = [];
             if (state.profilesToEvaluate.length > 0) {

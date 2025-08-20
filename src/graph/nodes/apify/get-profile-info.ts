@@ -1,20 +1,19 @@
 import { log } from 'crawlee';
-import { orchestrator } from '../../../orchestrator.js';
+import type { ExtendedApifyClient } from 'apify-orchestrator';
 import type { State, StateAnnotation } from '../../state.js';
 import type { TikTokDatasetItem } from '../../../types.js';
 import { GET_TIKTOK_PROFILE_NODE_NAME, MOCK_GET_PROFILE_INFO_RUN_ID } from '../../../consts.js';
 import { sanitizeScrapeResults } from './utility.js';
 
-export function getTikTokProfile() {
+export function getTikTokProfile(apifyClient: ExtendedApifyClient) {
     return async (state: State): Promise<typeof StateAnnotation.Update> => {
         log.info(`[${GET_TIKTOK_PROFILE_NODE_NAME}] Collecting TikTok profiles information.`);
-        const client = await orchestrator.apifyClient();
 
         let run;
         if (state.mock) {
-            run = await client.run(MOCK_GET_PROFILE_INFO_RUN_ID).get();
+            run = await apifyClient.run(MOCK_GET_PROFILE_INFO_RUN_ID).get();
         } else {
-            run = await client.actor('clockworks/tiktok-scraper').call(
+            run = await apifyClient.actor('clockworks/tiktok-scraper').call(
                 GET_TIKTOK_PROFILE_NODE_NAME,
                 {
                     profiles: state.profilesToEvaluate,
@@ -22,7 +21,7 @@ export function getTikTokProfile() {
                 },
             );
         }
-        const items = (await client.dataset(run!.defaultDatasetId).listItems({ clean: true })).items as TikTokDatasetItem[];
+        const items = (await apifyClient.dataset(run!.defaultDatasetId).listItems({ clean: true })).items as TikTokDatasetItem[];
 
         const scrapedProfiles = sanitizeScrapeResults(items);
 

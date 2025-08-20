@@ -1,4 +1,5 @@
 import { Actor, log } from 'apify';
+import { Orchestrator } from 'apify-orchestrator';
 import type { Input } from './types.js';
 import { initializeGraph } from './graph/initalize-graph.js';
 
@@ -18,7 +19,16 @@ if (usernames.length > 0) {
     log.info(`Generating keywords and looking for suitable influencer. Max number of influencer scraped: ${generatedKeywords * profilesPerKeyword}`);
 }
 
-const chain = initializeGraph();
+const orchestrator = new Orchestrator({
+    enableLogs: true,
+    hideSensitiveInformation: false,
+    persistenceSupport: 'kvs',
+    persistencePrefix: 'apify-orchestrator-',
+    abortAllRunsOnGracefulAbort: true,
+});
+const apifyClient = await orchestrator.apifyClient();
+
+const chain = initializeGraph(apifyClient);
 
 await chain.invoke({
     profilesToEvaluate: { append: usernames },
